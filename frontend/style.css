@@ -1,0 +1,120 @@
+/* Reset básico */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #ece9e6, #ffffff);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 900px;
+    height: 100vh;
+    background: #f5f5f5;
+    border-radius: 0;
+    overflow: hidden;
+}
+
+.chat-header {
+    padding: 15px;
+    background: #075E54;
+    color: #fff;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#chat {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Mensajes */
+.message {
+    max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 20px;
+    word-wrap: break-word;
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
+}
+
+/* Hora del mensaje */
+.message .time {
+    display: block;
+    font-size: 10px;
+    color: rgba(0,0,0,0.4);
+    margin-top: 5px;
+    text-align: right;
+}
+
+/* Usuario */
+.user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #34B7F1, #128C7E);
+    color: #fff;
+    border-bottom-right-radius: 5px;
+}
+
+/* Bot */
+.bot {
+    align-self: flex-start;
+    background: #fff;
+    color: #000;
+    border-bottom-left-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Animación de "escribiendo..." */
+.typing {
+    font-style: italic;
+    color: #555;
+}
+
+/* Área de input */
+.input-box {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    background: #e0e0e0;
+}
+
+.input-box input {
+    flex: 1;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 25px;
+    outline: none;
+    font-size: 14px;
+}
+
+.input-box button {
+    margin-left: 10px;
+    padding: 0 20px;
+    border: none;
+    background: #128C7E;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.input-box button:hover {
+    background: #075E54;
+}
