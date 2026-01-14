@@ -52,6 +52,14 @@ class Utils {
     return null;
   }
 
+  // Validar contraseña simple
+  static String? validatePasswordSimple(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor ingrese su contraseña';
+    }
+    return null;
+  }
+
   // Validar Población
   static String? validateCity(String? value) {
     if (value == null || value.isEmpty) {

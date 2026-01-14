@@ -6,7 +6,6 @@ class UserService {
 
   // Función para crear un documento de usuario en Firestore
   Future<void> createUserDocument({
-    required String apodo,
     required String nombre,
     required String apellido,
     required String email,
@@ -17,7 +16,6 @@ class UserService {
     if (user != null) {
       try {
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          'username': apodo,
           'name': nombre,
           'lastname': apellido,
           'email': email,
@@ -31,7 +29,6 @@ class UserService {
   }
 
   Future<void> updateUserDocument({
-    required String apodo,
     required String nombre,
     required String apellido,
     required String email,
@@ -41,7 +38,6 @@ class UserService {
     if (user != null) {
       try {
         await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-          'username': apodo,
           'name': nombre,
           'lastname': apellido,
           'email': email,
@@ -105,53 +101,4 @@ class UserService {
       throw Exception('Error al deshabilitar la cuenta: $e');
     }
   }
-
-  // Añadir una plataforma al usuario
-  Future<void> addPlatform({
-    required String platformType, // ej: "xbox", "psn", "steam"
-    required String accountId,    // id único de la cuenta en esa plataforma
-  }) async {
-    final user = _auth.currentUser;
-    if (user == null) throw Exception('Usuario no autenticado');
-
-    try {
-      final platformData = {
-        'type': platformType,
-        'id': accountId,
-      };
-
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-        'platforms': FieldValue.arrayUnion([platformData]),
-      });
-    } catch (e) {
-      throw Exception('Error al añadir plataforma: $e');
-    }
-  }
-
-  Future<List<Map<String, dynamic>>> getPlatforms() async {
-    final user = _auth.currentUser;
-    if (user == null) throw Exception('Usuario no autenticado');
-
-    try {
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-
-      if (!doc.exists) throw Exception('Documento de usuario no encontrado');
-
-      final data = doc.data();
-      if (data == null || !data.containsKey('platforms')) return [];
-
-      final platforms = data['platforms'];
-      if (platforms is List) {
-        return platforms.map<Map<String, dynamic>>((e) => Map<String, dynamic>.from(e)).toList();
-      } else {
-        return [];
-      }
-    } catch (e) {
-      throw Exception('Error al obtener plataformas: $e');
-    }
-  }
-
 }

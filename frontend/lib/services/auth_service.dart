@@ -5,6 +5,41 @@ import 'package:chatgva/models/login_result.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  Future<LoginResult> loginAsGuest() async {
+    try {
+      final result = await _auth.signInAnonymously();
+      final user = result.user;
+
+      if (user != null) {
+        final userRef =
+        FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+        final userDoc = await userRef.get();
+
+        // Crear documento si no existe
+        if (!userDoc.exists) {
+          await userRef.set({
+            'role': 'guest',
+            'disabled': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+
+        // Comprobación por coherencia (aunque no debería pasar)
+        if (userDoc.exists && userDoc.data()?['disabled'] == true) {
+          return LoginResult(isDisabled: true);
+        }
+
+        return LoginResult(user: user);
+      } else {
+        throw Exception('No se pudo iniciar sesión como invitado.');
+      }
+    } on FirebaseAuthException catch (e) {
+      throw Exception(_getErrorMessage(e));
+    }
+  }
+
+
   Future<LoginResult> loginWithEmail(String email, String password) async {
     try {
       final result = await _auth.signInWithEmailAndPassword(

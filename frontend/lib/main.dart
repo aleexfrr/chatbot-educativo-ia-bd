@@ -1,3 +1,4 @@
+import 'package:chatgva/screens/chat_screen.dart';
 import 'package:chatgva/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -56,7 +57,7 @@ class MyApp extends StatelessWidget {
       ),
       themeMode: themeProvider.themeMode,
       title: 'ChatGVA',
-      home: const HomeScreen(),
+      home: const ChatScreen(),
     );
   }
 }

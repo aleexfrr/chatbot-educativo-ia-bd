@@ -15,9 +15,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
-  final usernameController = TextEditingController();
   final nameController = TextEditingController();
-  // final lastNameController = TextEditingController();
+  final lastNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -32,14 +31,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    final username = usernameController.text.trim();
     final name = nameController.text.trim();
-    // final lastName = lastNameController.text.trim(); // Asegúrate de tener un controlador para el apellido
+    final lastName = lastNameController.text.trim();
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
     // Validar que los campos no estén vacíos
-    if (username.isEmpty || name.isEmpty || email.isEmpty || password.isEmpty) {
+    if (name.isEmpty || lastName.isEmpty || email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor completa todos los campos')),
       );
@@ -57,9 +55,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (user != null) {
         await _userService.createUserDocument(
-          apodo: username,
           nombre: name,
-          apellido: "lastname",
+          apellido: lastName,
           email: email,
         );
         if (mounted) {
@@ -142,20 +139,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 32),
-                          // Nickname
-                          TextFormField(
-                            controller: usernameController,
-                            style: const TextStyle(color: Colors.white),
-                            validator: Utils.validateName,
-                            decoration: _inputDecoration("Nickname", Icons.person),
-                          ),
-                          const SizedBox(height: 20),
                           // Nombre
                           TextFormField(
                             controller: nameController,
                             style: const TextStyle(color: Colors.white),
                             validator: Utils.validateName,
-                            decoration: _inputDecoration("Nombre completo", Icons.person),
+                            decoration: _inputDecoration("Nombre", Icons.person),
+                          ),
+                          const SizedBox(height: 20),
+                          // Apellido
+                          TextFormField(
+                            controller: lastNameController,
+                            style: const TextStyle(color: Colors.white),
+                            validator: Utils.validateLastName,
+                            decoration: _inputDecoration("Apellidos", Icons.person),
                           ),
                           const SizedBox(height: 20),
 
@@ -174,7 +171,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             controller: passwordController,
                             obscureText: !_isPasswordVisible,
                             style: const TextStyle(color: Colors.white),
-                            validator: Utils.validatePassword,
+                            validator: Utils.validatePasswordSimple,
                             decoration: _inputDecoration(
                               "Contraseña",
                               Icons.lock,

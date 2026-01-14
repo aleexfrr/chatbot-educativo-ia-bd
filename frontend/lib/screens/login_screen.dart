@@ -68,6 +68,40 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _loginAsGuest() async {
+    setState(() => isLoading = true);
+
+    try {
+      final result = await _authService.loginAsGuest();
+
+      if (!mounted) return;
+
+      if (result.isDisabled) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => DisabledAccountScreen()),
+        );
+      } else if (result.user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Has entrado como invitado')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,7 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             controller: passwordController,
                             obscureText: _isPasswordVisible,
                             style: const TextStyle(color: Colors.white),
-                            validator: Utils.validatePassword,
+                            validator: Utils.validatePasswordSimple,
                             decoration: InputDecoration(
                               labelText: 'Contraseña',
                               labelStyle: const TextStyle(color: Colors.white),
@@ -213,7 +247,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: _login,
+                              onPressed: _loginAsGuest,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Theme.of(context).primaryColor,
                                 padding: const EdgeInsets.symmetric(vertical: 14),
@@ -221,7 +255,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              child: const Text("Iniciar como invitado"),
+                              child: const Text("Entrar como invitado"),
                             ),
                           ),
                           const SizedBox(height: 30),
