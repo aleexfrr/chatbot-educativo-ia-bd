@@ -1,5 +1,4 @@
 import 'package:chatgva/screens/chat_screen.dart';
-import 'package:chatgva/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -43,13 +42,13 @@ class MyApp extends StatelessWidget {
       ],
       locale: const Locale('es', 'ES'),
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
         useMaterial3: true,
         textTheme: GoogleFonts.interTextTheme(),
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
+          seedColor: Colors.greenAccent,
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
@@ -57,7 +56,7 @@ class MyApp extends StatelessWidget {
       ),
       themeMode: themeProvider.themeMode,
       title: 'ChatGVA',
-      home: const ChatScreen(),
+      home: const ChatScreen(conversationId: 'global'),
     );
   }
 }

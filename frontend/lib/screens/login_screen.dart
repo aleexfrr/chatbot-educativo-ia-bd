@@ -1,3 +1,4 @@
+import 'package:chatgva/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chatgva/screens/forgot_password_screen.dart';
 import 'package:chatgva/screens/register_screen.dart';
@@ -53,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const ChatScreen(conversationId: 'global')),
         );
       }
     } catch (e) {
@@ -87,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          MaterialPageRoute(builder: (_) => const ChatScreen(conversationId: 'global')),
         );
       }
     } catch (e) {

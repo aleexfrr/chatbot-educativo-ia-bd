@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../services/chat_service.dart';
-import '../../models/chat_message.dart';
-import '../widgets/message_bubble.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:chatgva/screens/login_screen.dart';
+import 'package:chatgva/services/chat_service.dart';
+import 'package:chatgva/models/chat_message.dart';
+import 'package:chatgva/widgets/message_bubble.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final String conversationId;
+
+  const ChatScreen({super.key, required this.conversationId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -19,29 +23,66 @@ class _ChatScreenState extends State<ChatScreen> {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
 
-    _chatService.sendMessage(text);
+    _chatService.sendMessage(
+      conversationId: widget.conversationId,
+      text: text,
+      sender: 'user',
+    );
+
     _controller.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chat global'),
-        elevation: 1,
-      ),
-      body: Column(
-        children: [
-          Expanded(child: _messages()),
-          _inputBar(),
-        ],
-      ),
+    return FutureBuilder<User?>(
+      future: _checkLoginStatus(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Mientras se comprueba el login
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (!snapshot.hasData) {
+          // No está logueado
+          return const LoginScreen();
+        }
+
+        // Usuario logueado
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Chat'),
+          ),
+          body: Stack(
+            children: [
+              // Imagen de fondo
+              SizedBox.expand(
+                child: Image.asset(
+                  'assets/images/bg_chat.jpeg', // tu imagen
+                  fit: BoxFit.cover,
+                ),
+              ),
+
+              // Contenido del chat
+              Column(
+                children: [
+                  Expanded(child: _messages()),
+                  _inputBar(),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
+  }
+
+  Future<User?> _checkLoginStatus() async {
+    return FirebaseAuth.instance.currentUser;
   }
 
   Widget _messages() {
     return StreamBuilder<QuerySnapshot>(
-      stream: _chatService.getMessages(),
+      stream: _chatService.getMessages(widget.conversationId),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../../../models/chat_message.dart';
+import 'package:chatgva/models/chat_message.dart';
 
 class MessageBubble extends StatelessWidget {
   final ChatMessage message;
@@ -9,8 +8,8 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    final isMe = currentUser?.uid == message.uid;
+    final isMe = message.sender == 'user';
+    final displayName = message.sender == 'user' ? 'Tú' : 'Asistente';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -21,7 +20,7 @@ class MessageBubble extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
             color: isMe
-                ? Theme.of(context).colorScheme.primary
+                ? Theme.of(context).colorScheme.inversePrimary
                 : Colors.grey.shade200,
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(18),
@@ -35,10 +34,10 @@ class MessageBubble extends StatelessWidget {
             isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
               Text(
-                message.username,
+                displayName,
                 style: TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
                   color: isMe ? Colors.white70 : Colors.black54,
                 ),
               ),

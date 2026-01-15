@@ -5,25 +5,43 @@ class ChatService {
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
 
-  CollectionReference get _messagesRef =>
-      _firestore.collection('chats').doc('global').collection('messages');
+  CollectionReference _messagesRef(String conversationId) {
+    final uid = _auth.currentUser!.uid;
 
-  Stream<QuerySnapshot> getMessages() {
-    return _messagesRef
+    return _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('conversations')
+        .doc(conversationId)
+        .collection('messages');
+  }
+
+  Stream<QuerySnapshot> getMessages(String conversationId) {
+    return _messagesRef(conversationId)
         .orderBy('createdAt', descending: true)
         .snapshots();
   }
 
-  Future<void> sendMessage(String text) async {
-    final user = _auth.currentUser;
-    if (user == null) return;
-
-    await _messagesRef.add({
+  Future<void> sendMessage({
+    required String conversationId,
+    required String text,
+    required String sender, // 'user' | 'assistant'
+  }) async {
+    await _messagesRef(conversationId).add({
       'text': text,
-      'uid': user.uid,
-      'username': user.isAnonymous ? 'Invitado' : (user.email ?? 'Usuario'),
-      'isGuest': user.isAnonymous,
+      'sender': sender,
       'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    // updatedAt de la conversación
+    final uid = _auth.currentUser!.uid;
+    await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('conversations')
+        .doc(conversationId)
+        .update({
+      'updatedAt': FieldValue.serverTimestamp(),
     });
   }
 }
