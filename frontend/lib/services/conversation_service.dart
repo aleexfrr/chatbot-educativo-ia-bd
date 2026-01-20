@@ -10,6 +10,23 @@ class ConversationService {
   CollectionReference get _conversationsRef =>
       _firestore.collection('users').doc(_uid).collection('conversations');
 
+  /// Obtener o crear la primera conversación
+  Future<String> getOrCreateInitialConversation() async {
+    final snapshot = await _conversationsRef
+        .orderBy('updatedAt', descending: true)
+        .limit(1)
+        .get();
+
+    // Si existe una conversación se usa
+    if (snapshot.docs.isNotEmpty) {
+      return snapshot.docs.first.id;
+    }
+
+    // Si no existe se crea una nueva
+    final user = _auth.currentUser!;
+    return createConversation(isGuest: user.isAnonymous);
+  }
+
   /// Crear nueva conversación
   Future<String> createConversation({required bool isGuest}) async {
     final doc = await _conversationsRef.add({

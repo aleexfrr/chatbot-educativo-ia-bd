@@ -1,9 +1,12 @@
+import 'package:chatgva/services/user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:chatgva/models/login_result.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final UserService _userService = UserService();
 
   Future<LoginResult> loginAsGuest() async {
     try {
@@ -11,15 +14,13 @@ class AuthService {
       final user = result.user;
 
       if (user != null) {
-        final userRef =
-        FirebaseFirestore.instance.collection('users').doc(user.uid);
-
+        final userRef = _firestore.collection('users').doc(user.uid);
         final userDoc = await userRef.get();
 
         // Crear documento si no existe
         if (!userDoc.exists) {
           await userRef.set({
-            'role': 'guest',
+            'isGuest': true,
             'disabled': false,
             'createdAt': FieldValue.serverTimestamp(),
           });
@@ -50,7 +51,7 @@ class AuthService {
       final user = result.user;
 
       if (user != null) {
-        final userDoc = await FirebaseFirestore.instance
+        final userDoc = await _firestore
             .collection('users')
             .doc(user.uid)
             .get();
@@ -85,7 +86,17 @@ class AuthService {
   }
 
   Future<void> logout() async {
-    await _auth.signOut();
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    final userDoc = await _firestore.collection('users').doc(user.uid).get();
+    final isGuest = userDoc.data()?['isGuest'] == true;
+
+    if (isGuest) {
+      await _userService.deleteUserAccount();
+    } else {
+      await _auth.signOut();
+    }
   }
 
   String _getErrorMessage(FirebaseAuthException e) {

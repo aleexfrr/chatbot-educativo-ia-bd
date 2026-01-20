@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'conversation_service.dart';
 
 class UserService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final ConversationService conversationService = ConversationService();
 
   // Función para crear un documento de usuario en Firestore
   Future<void> createUserDocument({
@@ -19,6 +21,7 @@ class UserService {
           'name': nombre,
           'lastname': apellido,
           'email': email,
+          'isGuest': false,
           'createdAt': Timestamp.now(),
           'disabled': false,
         });
@@ -70,10 +73,8 @@ class UserService {
     if (user == null) throw Exception('Usuario no autenticado');
 
     try {
-      // Eliminar documento en Firestore
+      await conversationService.deleteAllConversations();
       await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
-
-      // Eliminar usuario de Firebase Auth
       await user.delete();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {

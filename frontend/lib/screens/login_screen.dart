@@ -1,11 +1,9 @@
-import 'package:chatgva/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chatgva/screens/forgot_password_screen.dart';
 import 'package:chatgva/screens/register_screen.dart';
 import 'package:chatgva/utilities/utils.dart';
 import 'package:chatgva/services/auth_service.dart';
 import 'disabled_account_screen.dart';
-import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -52,10 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Inicio de sesión exitoso')),
         );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ChatScreen(conversationId: 'global')),
-        );
       }
     } catch (e) {
       if (!mounted) return;
@@ -86,10 +80,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Has entrado como invitado')),
         );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const ChatScreen(conversationId: 'global')),
-        );
       }
     } catch (e) {
       if (!mounted) return;
@@ -105,6 +95,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final hintColor = theme.colorScheme.onSurface;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -139,15 +132,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           const CircleAvatar(
                             radius: 70,
-                            backgroundImage: AssetImage('assets/icons/logo.png'),
+                            backgroundImage: AssetImage('assets/images/logo.png'),
                             backgroundColor: Colors.transparent,
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            "¡Bienvenido a ChatGVA!",
+                            "¡Bienvenido a XENOBOT!",
                             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSurface,
+                              color: hintColor,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -156,21 +149,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           // Email
                           TextFormField(
                             controller: emailController,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: hintColor),
                             keyboardType: TextInputType.emailAddress,
                             validator: Utils.validateEmail,
                             decoration: InputDecoration(
                               labelText: 'Correo electrónico',
-                              labelStyle: const TextStyle(color: Colors.white),
-                              prefixIcon: const Icon(Icons.email, color: Colors.white),
+                              labelStyle: TextStyle(color: hintColor),
+                              prefixIcon: Icon(Icons.email, color: hintColor),
                               errorStyle: const TextStyle(color: Colors.redAccent),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Colors.white),
+                                borderSide: BorderSide(color: hintColor),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Colors.white, width: 2),
+                                borderSide: BorderSide(color: hintColor, width: 2),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -188,20 +181,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextFormField(
                             controller: passwordController,
                             obscureText: _isPasswordVisible,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: hintColor),
                             validator: Utils.validatePasswordSimple,
                             decoration: InputDecoration(
                               labelText: 'Contraseña',
-                              labelStyle: const TextStyle(color: Colors.white),
-                              prefixIcon: const Icon(Icons.lock, color: Colors.white),
+                              labelStyle: TextStyle(color: hintColor),
+                              prefixIcon: Icon(Icons.lock, color: hintColor),
                               errorStyle: const TextStyle(color: Colors.redAccent),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Colors.white),
+                                borderSide: BorderSide(color: hintColor),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Colors.white, width: 2),
+                                borderSide: BorderSide(color: hintColor, width: 2),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -216,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   _isPasswordVisible
                                       ? Icons.visibility_off
                                       : Icons.visibility,
-                                  color: Colors.white,
+                                  color: hintColor,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -234,13 +227,27 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: ElevatedButton(
                               onPressed: _login,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).primaryColor,
+                                backgroundColor: theme.brightness == Brightness.dark
+                                    ? Colors.black12
+                                    : Colors.teal,
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
+                                  side: BorderSide(
+                                    color: Colors.teal, // color del borde
+                                    width: 2,
+                                  ),
                                 ),
                               ),
-                              child: const Text("Iniciar sesión"),
+                              child: Text(
+                                  "Iniciar sesión",
+                                  style: TextStyle(
+                                      color: theme.brightness == Brightness.dark
+                                          ? Colors.teal
+                                          : Colors.white,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -250,13 +257,27 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: ElevatedButton(
                               onPressed: _loginAsGuest,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).primaryColor,
+                                backgroundColor: theme.brightness == Brightness.dark
+                                    ? Colors.black12
+                                    : Colors.teal,
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
+                                  side: BorderSide(
+                                    color: Colors.teal, // color del borde
+                                    width: 2,
+                                  ),
                                 ),
                               ),
-                              child: const Text("Entrar como invitado"),
+                              child: Text(
+                                  "Entrar como invitado",
+                                  style: TextStyle(
+                                      color: theme.brightness == Brightness.dark
+                                          ? Colors.teal
+                                          : Colors.white,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 30),
@@ -268,7 +289,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
                               );
                             },
-                            child: const Text("¿Has olvidado la contraseña?"),
+                            child: const Text(
+                                "¿Has olvidado la contraseña?",
+                                style: TextStyle(color: Colors.teal)
+                            ),
                           ),
 
                           TextButton(
@@ -278,7 +302,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 MaterialPageRoute(builder: (context) => const RegisterScreen()),
                               );
                             },
-                            child: const Text("¿No tienes cuenta? Regístrate"),
+                            child: const Text(
+                                "¿No tienes cuenta? Regístrate",
+                                style: TextStyle(color: Colors.teal),
+                            ),
                           ),
                         ],
                       ),
