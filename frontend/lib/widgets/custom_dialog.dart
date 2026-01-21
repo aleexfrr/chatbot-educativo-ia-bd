@@ -63,7 +63,7 @@ class CustomDialog {
           ),
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        backgroundColor: Theme.of(context).dialogBackgroundColor,
+        backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

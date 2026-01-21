@@ -1,8 +1,8 @@
+import 'package:chatgva/screens/auth_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:chatgva/utilities/utils.dart';
 import '../services/auth_service.dart';
 import '../services/user_service.dart';
-import 'home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -65,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           );
           Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => HomeScreen())
+              MaterialPageRoute(builder: (context) => AuthGate())
           );
         }
       }

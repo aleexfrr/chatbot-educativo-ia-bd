@@ -21,8 +21,7 @@ class AuthService {
         if (!userDoc.exists) {
           await userRef.set({
             'name': 'Invitado',
-            'email': '',
-            'disabled': false,
+            'email': null,
             'createdAt': FieldValue.serverTimestamp(),
           });
         }

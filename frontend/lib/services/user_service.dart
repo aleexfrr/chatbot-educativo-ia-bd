@@ -24,6 +24,8 @@ class UserService {
           'createdAt': Timestamp.now(),
           'disabled': false,
         });
+
+        await user.updateDisplayName('$nombre $apellido');
       } catch (e) {
         throw Exception('Error al crear el documento de usuario: $e');
       }

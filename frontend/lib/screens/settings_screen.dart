@@ -16,7 +16,9 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool notificationsEnabled = true;
+  final _auth = FirebaseAuth.instance;
+
+  bool get isGuest => _auth.currentUser?.isAnonymous ?? false;
 
   Future<void> _handleDeleteAccount(BuildContext context) async {
     final userService = UserService();
@@ -110,6 +112,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final user = _auth.currentUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -119,21 +122,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // ===== Notificaciones =====
-          Text('Notificaciones', style: TextStyles.sectionTitleStyle(context)),
+          // ===== Perfil =====
+          Text('Perfil', style: TextStyles.sectionTitleStyle(context)),
           const SizedBox(height: 8),
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             elevation: 3,
-            child: SwitchListTile(
-              secondary: const Icon(Icons.notifications),
-              title: const Text('Notificaciones generales'),
-              value: notificationsEnabled,
-              onChanged: (bool value) {
-                setState(() {
-                  notificationsEnabled = value;
-                });
-              },
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.person),
+                  title: Text(user?.displayName ?? 'Invitado'),
+                  subtitle: Text(user?.email ?? 'No disponible'),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.badge),
+                  title: Text(isGuest ? 'Invitado' : 'Usuario registrado'),
+                ),
+              ],
             ),
           ),
 
@@ -157,45 +164,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           const SizedBox(height: 24),
 
-          // ===== Gestión de cuenta =====
-          Text('Gestión de cuenta', style: TextStyles.sectionTitleStyle(context)),
-          const SizedBox(height: 8),
-          Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            elevation: 3,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.person_off),
-                  title: const Text('Deshabilitar cuenta'),
-                  onTap: () {
-                    CustomDialog.show(context, type: DialogType.desactivateAccount,
-                      onConfirm: () async {
-                        await _handleDisableAccount(context);
-                      },
-                    );
-                  },
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.delete, color: Colors.red),
-                  title: const Text(
-                    'Eliminar cuenta',
-                    style: TextStyle(color: Colors.red),
+          // ===== Gestión de cuenta (solo usuarios normales) =====
+          if (!isGuest) ...[
+            Text('Gestión de cuenta', style: TextStyles.sectionTitleStyle(context)),
+            const SizedBox(height: 8),
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              elevation: 3,
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.person_off),
+                    title: const Text('Deshabilitar cuenta'),
+                    onTap: () {
+                      CustomDialog.show(context,
+                          type: DialogType.desactivateAccount, onConfirm: () async {
+                            await _handleDisableAccount(context);
+                          });
+                    },
                   ),
-                  onTap: () {
-                    CustomDialog.show(context, type: DialogType.deleteAccount,
-                      onConfirm: () async {
-                        await _handleDeleteAccount(context);
-                      },
-                    );
-                  },
-                ),
-              ],
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.delete, color: Colors.red),
+                    title: const Text(
+                      'Eliminar cuenta',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    onTap: () {
+                      CustomDialog.show(context,
+                          type: DialogType.deleteAccount, onConfirm: () async {
+                            await _handleDeleteAccount(context);
+                          });
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
+            const SizedBox(height: 24),
+          ],
 
-          const SizedBox(height: 24),
+          // ===== Cerrar sesión =====
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             elevation: 3,
@@ -206,11 +214,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: TextStyle(color: Colors.red),
               ),
               onTap: () async {
-                CustomDialog.show(context, type: DialogType.logout,
-                  onConfirm: () async {
-                    await _handleLogout(context);
-                  },
-                );
+                CustomDialog.show(context, type: DialogType.logout, onConfirm: () async {
+                  await _handleLogout(context);
+                });
               },
             ),
           ),
