@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:chatgva/models/conversation.dart';
 
 class ConversationService {
   final _firestore = FirebaseFirestore.instance;
@@ -9,6 +10,8 @@ class ConversationService {
 
   CollectionReference get _conversationsRef =>
       _firestore.collection('users').doc(_uid).collection('conversations');
+
+  bool get isGuest => _auth.currentUser?.isAnonymous ?? true;
 
   /// Obtener o crear la primera conversación
   Future<String> getOrCreateInitialConversation() async {
@@ -23,12 +26,11 @@ class ConversationService {
     }
 
     // Si no existe se crea una nueva
-    final user = _auth.currentUser!;
-    return createConversation(isGuest: user.isAnonymous);
+    return createConversation();
   }
 
   /// Crear nueva conversación
-  Future<String> createConversation({required bool isGuest}) async {
+  Future<String> createConversation() async {
     final doc = await _conversationsRef.add({
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
@@ -39,10 +41,20 @@ class ConversationService {
   }
 
   /// Obtener conversaciones del usuario
-  Stream<QuerySnapshot> getConversations() {
-    return _conversationsRef
+  Stream<List<Conversation>> getUserConversations() {
+    final uid = _auth.currentUser!.uid;
+
+    return _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('conversations')
         .orderBy('updatedAt', descending: true)
-        .snapshots();
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Conversation.fromFirestore(doc.id, doc.data()))
+          .toList();
+    });
   }
 
   /// Borrar una conversación completa (mensajes incluidos)

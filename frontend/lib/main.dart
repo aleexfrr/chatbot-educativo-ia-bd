@@ -48,14 +48,14 @@ class MyApp extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.greenAccent,
+          seedColor: Colors.teal,
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
       ),
       themeMode: themeProvider.themeMode,
-      title: 'ChatGVA',
+      title: 'XenoBOT',
       home: const AuthGate(),
     );
   }

@@ -85,6 +85,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final hintColor = theme.colorScheme.onSurface;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -122,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         children: [
                           const CircleAvatar(
                             radius: 70,
-                            backgroundImage: AssetImage('assets/icons/logo.png'),
+                            backgroundImage: AssetImage('assets/images/logo.png'),
                             backgroundColor: Colors.transparent,
                           ),
                           const SizedBox(height: 16),
@@ -134,7 +137,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 .headlineMedium
                                 ?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSurface,
+                              color: hintColor,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -142,27 +145,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           // Nombre
                           TextFormField(
                             controller: nameController,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: hintColor),
                             validator: Utils.validateName,
-                            decoration: _inputDecoration("Nombre", Icons.person),
+                            decoration: _inputDecoration("Nombre", hintColor, Icons.person),
                           ),
                           const SizedBox(height: 20),
                           // Apellido
                           TextFormField(
                             controller: lastNameController,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: hintColor),
                             validator: Utils.validateLastName,
-                            decoration: _inputDecoration("Apellidos", Icons.person),
+                            decoration: _inputDecoration("Apellidos", hintColor, Icons.person),
                           ),
                           const SizedBox(height: 20),
 
                           // Correo
                           TextFormField(
                             controller: emailController,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: hintColor),
                             keyboardType: TextInputType.emailAddress,
                             validator: Utils.validateEmail,
-                            decoration: _inputDecoration("Correo electrónico", Icons.email),
+                            decoration: _inputDecoration("Correo electrónico", hintColor, Icons.email),
                           ),
                           const SizedBox(height: 20),
 
@@ -170,10 +173,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           TextFormField(
                             controller: passwordController,
                             obscureText: !_isPasswordVisible,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: hintColor),
                             validator: Utils.validatePasswordSimple,
                             decoration: _inputDecoration(
                               "Contraseña",
+                              hintColor,
                               Icons.lock,
                               isPassword: true,
                               isVisible: _isPasswordVisible,
@@ -190,7 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           TextFormField(
                             controller: confirmPasswordController,
                             obscureText: !_isConfirmPasswordVisible,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: hintColor),
                             validator: (value) {
                               if (value != passwordController.text) {
                                 return 'Las contraseñas no coinciden';
@@ -199,6 +203,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             },
                             decoration: _inputDecoration(
                               "Confirmar contraseña",
+                              hintColor,
                               Icons.lock_outline,
                               isPassword: true,
                               isVisible: _isConfirmPasswordVisible,
@@ -217,12 +222,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             child: ElevatedButton(
                               onPressed: _register,
                               style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.brightness == Brightness.dark
+                                    ? Colors.black12
+                                    : Colors.teal,
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
+                                  side: BorderSide(
+                                    color: Colors.teal, // color del borde
+                                    width: 2,
+                                  ),
                                 ),
                               ),
-                              child: const Text("Registrarse"),
+                              child: Text(
+                                "Registrarse",
+                                style: TextStyle(
+                                    color: theme.brightness == Brightness.dark
+                                        ? Colors.teal
+                                        : Colors.white,
+                                    fontWeight: FontWeight.bold
+                                ),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -231,7 +251,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: const Text("¿Ya tienes cuenta? Inicia sesión"),
+                            child: const Text(
+                                "¿Ya tienes cuenta? Inicia sesión",
+                                style: TextStyle(color: Colors.teal),
+                            ),
                           ),
                         ],
                       ),
@@ -248,6 +271,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   InputDecoration _inputDecoration(
       String label,
+      Color color,
       IconData icon, {
         bool isPassword = false,
         bool isVisible = false,
@@ -255,16 +279,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Colors.white),
-      prefixIcon: Icon(icon, color: Colors.white),
+      labelStyle: TextStyle(color: color),
+      prefixIcon: Icon(icon, color: color),
       errorStyle: const TextStyle(color: Colors.redAccent),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.white),
+        borderSide: BorderSide(color: color),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.white, width: 2),
+        borderSide: BorderSide(color: color, width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -278,7 +302,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ? IconButton(
         icon: Icon(
           isVisible ? Icons.visibility_off : Icons.visibility,
-          color: Colors.white,
+          color: color,
         ),
         onPressed: onToggle,
       )

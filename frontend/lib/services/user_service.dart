@@ -21,7 +21,6 @@ class UserService {
           'name': nombre,
           'lastname': apellido,
           'email': email,
-          'isGuest': false,
           'createdAt': Timestamp.now(),
           'disabled': false,
         });

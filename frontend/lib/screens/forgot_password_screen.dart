@@ -33,6 +33,9 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final hintColor = theme.colorScheme.onSurface;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -70,23 +73,23 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                         children: [
                           const CircleAvatar(
                             radius: 70,
-                            backgroundImage: AssetImage('assets/icons/logo.png'),
+                            backgroundImage: AssetImage('assets/images/logo.png'),
                             backgroundColor: Colors.transparent,
                           ),
                           const SizedBox(height: 16),
                           Text(
                             "¿Olvidaste tu contraseña?",
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            style: theme.textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSurface,
+                              color: hintColor,
                             ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 16),
                           Text(
                             "Introduce tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withAlpha((0.8 * 255).toInt()),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurface.withAlpha((0.8 * 255).toInt()),
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -95,21 +98,21 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                           // Email
                           TextFormField(
                             controller: emailController,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: hintColor),
                             keyboardType: TextInputType.emailAddress,
                             validator: Utils.validateEmail,
                             decoration: InputDecoration(
                               labelText: 'Correo electrónico',
-                              labelStyle: const TextStyle(color: Colors.white),
-                              prefixIcon: const Icon(Icons.email, color: Colors.white),
+                              labelStyle: TextStyle(color: hintColor),
+                              prefixIcon: Icon(Icons.email, color: hintColor),
                               errorStyle: const TextStyle(color: Colors.redAccent),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Colors.white),
+                                borderSide: BorderSide(color: hintColor),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Colors.white, width: 2),
+                                borderSide: BorderSide(color: hintColor, width: 2),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -129,14 +132,27 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                             child: ElevatedButton(
                               onPressed: _forgotPassword,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).primaryColor,
-                                foregroundColor: Colors.white,
+                                backgroundColor: theme.brightness == Brightness.dark
+                                    ? Colors.black12
+                                    : Colors.teal,
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
+                                  side: BorderSide(
+                                    color: Colors.teal, // color del borde
+                                    width: 2,
+                                  ),
                                 ),
                               ),
-                              child: const Text("Enviar correo"),
+                              child: Text(
+                                "Enviar correo",
+                                style: TextStyle(
+                                    color: theme.brightness == Brightness.dark
+                                        ? Colors.teal
+                                        : Colors.white,
+                                    fontWeight: FontWeight.bold
+                                ),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -146,7 +162,10 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: const Text("Volver a inicio de sesión"),
+                            child: const Text(
+                              "Volver a inicio de sesión",
+                              style: TextStyle(color: Colors.teal),
+                            ),
                           ),
                         ],
                       ),

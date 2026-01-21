@@ -152,27 +152,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: TextStyle(color: hintColor),
                             keyboardType: TextInputType.emailAddress,
                             validator: Utils.validateEmail,
-                            decoration: InputDecoration(
-                              labelText: 'Correo electrónico',
-                              labelStyle: TextStyle(color: hintColor),
-                              prefixIcon: Icon(Icons.email, color: hintColor),
-                              errorStyle: const TextStyle(color: Colors.redAccent),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: hintColor),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: hintColor, width: 2),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Colors.redAccent),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Colors.redAccent, width: 2),
-                              ),
+                            decoration: _inputDecoration(
+                              'Correo electrónico',
+                              hintColor,
+                              Icons.email,
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -183,40 +166,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             obscureText: _isPasswordVisible,
                             style: TextStyle(color: hintColor),
                             validator: Utils.validatePasswordSimple,
-                            decoration: InputDecoration(
-                              labelText: 'Contraseña',
-                              labelStyle: TextStyle(color: hintColor),
-                              prefixIcon: Icon(Icons.lock, color: hintColor),
-                              errorStyle: const TextStyle(color: Colors.redAccent),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: hintColor),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: hintColor, width: 2),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Colors.redAccent),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Colors.redAccent, width: 2),
-                              ),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _isPasswordVisible
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                  color: hintColor,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _isPasswordVisible = !_isPasswordVisible;
-                                  });
-                                },
-                              ),
+                            decoration: _inputDecoration(
+                              'Contraseña',
+                              hintColor,
+                              Icons.lock,
+                              isPassword: true,
+                              isVisible: !_isPasswordVisible,
+                              onToggle: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
                             ),
                           ),
                           const SizedBox(height: 30),
@@ -317,6 +277,47 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  InputDecoration _inputDecoration(
+      String label,
+      Color color,
+      IconData icon, {
+        bool isPassword = false,
+        bool isVisible = false,
+        VoidCallback? onToggle,
+      }) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(color: color),
+      prefixIcon: Icon(icon, color: color),
+      errorStyle: const TextStyle(color: Colors.redAccent),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: color),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: color, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.redAccent),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.redAccent, width: 2),
+      ),
+      suffixIcon: isPassword
+          ? IconButton(
+        icon: Icon(
+          isVisible ? Icons.visibility_off : Icons.visibility,
+          color: color,
+        ),
+        onPressed: onToggle,
+      )
+          : null,
     );
   }
 }

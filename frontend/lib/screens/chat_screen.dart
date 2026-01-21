@@ -1,4 +1,3 @@
-import 'package:chatgva/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:chatgva/services/chat_service.dart';
@@ -25,7 +24,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _chatService.sendMessage(
       conversationId: widget.conversationId,
       text: text,
-      sender: 'user',
+      sender: 'user', // si luego quieres diferenciar invitado, puedes pasarlo dinámicamente
     );
 
     _controller.clear();
@@ -34,27 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: _conversationDrawer(), // menu lateral
-      appBar: AppBar(
-        title: const Text('XenoBOT'),
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsScreen()),
-              );
-            },
-          ),
-        ],
-      ),
+      // Solo cuerpo, no drawer ni settings
       body: Stack(
         children: [
           // Fondo
@@ -87,6 +66,18 @@ class _ChatScreenState extends State<ChatScreen> {
 
         final docs = snapshot.data!.docs;
 
+        if (docs.isEmpty) {
+          return Center(
+            child: Text(
+              'No hay mensajes aún. ¡Empieza la conversación!',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(color: Colors.grey[400]),
+            ),
+          );
+        }
+
         return ListView.builder(
           reverse: true,
           padding: const EdgeInsets.only(top: 12),
@@ -112,6 +103,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(color: Colors.grey.shade300),
+                  color: Theme.of(context).colorScheme.surface.withAlpha(220),
                 ),
                 child: TextField(
                   controller: _controller,
@@ -142,35 +134,6 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  /// Drawer provisional (lo conectaremos con ConversationService)
-  Widget _conversationDrawer() {
-    return Drawer(
-      child: Column(
-        children: [
-          const DrawerHeader(
-            child: Text(
-              'Conversaciones',
-              style: TextStyle(fontSize: 20),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.add),
-            title: const Text('Nueva conversación'),
-            onTap: () {
-              // TODO: crear conversación y navegar
-            },
-          ),
-          const Divider(),
-          const Expanded(
-            child: Center(
-              child: Text('Listado de conversaciones'),
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -1,6 +1,4 @@
-import 'package:chatgva/screens/auth_gate.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 enum DialogType {
   logout,
@@ -79,17 +77,7 @@ class CustomDialog {
           TextButton(
             onPressed: () async {
               Navigator.pop(context); // Cierra el diálogo
-
-              if (type == DialogType.logout) {
-                await FirebaseAuth.instance.signOut();
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AuthGate()),
-                      (route) => false,
-                );
-              } else {
-                onConfirm?.call();
-              }
+              onConfirm?.call();
             },
             style: TextButton.styleFrom(
               foregroundColor: Colors.white,

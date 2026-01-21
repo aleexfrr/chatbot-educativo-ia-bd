@@ -1,4 +1,5 @@
 import 'package:chatgva/screens/auth_gate.dart';
+import 'package:chatgva/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -79,6 +80,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error al deshabilitar la cuenta: ${e.toString()}')),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleLogout(BuildContext context) async {
+    final authService = AuthService();
+
+    try {
+      await authService.logout();
+
+      if (context.mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const AuthGate()),
+              (route) => false,
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al cerrar sesión: ${e.toString()}')),
         );
       }
     }
@@ -183,7 +206,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: TextStyle(color: Colors.red),
               ),
               onTap: () async {
-                CustomDialog.show(context, type: DialogType.logout);
+                CustomDialog.show(context, type: DialogType.logout,
+                  onConfirm: () async {
+                    await _handleLogout(context);
+                  },
+                );
               },
             ),
           ),

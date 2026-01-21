@@ -20,7 +20,8 @@ class AuthService {
         // Crear documento si no existe
         if (!userDoc.exists) {
           await userRef.set({
-            'isGuest': true,
+            'name': 'Invitado',
+            'email': '',
             'disabled': false,
             'createdAt': FieldValue.serverTimestamp(),
           });
@@ -89,10 +90,7 @@ class AuthService {
     final user = _auth.currentUser;
     if (user == null) return;
 
-    final userDoc = await _firestore.collection('users').doc(user.uid).get();
-    final isGuest = userDoc.data()?['isGuest'] == true;
-
-    if (isGuest) {
+    if (user.isAnonymous) {
       await _userService.deleteUserAccount();
     } else {
       await _auth.signOut();
