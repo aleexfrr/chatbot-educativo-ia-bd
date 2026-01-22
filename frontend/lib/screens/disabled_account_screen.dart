@@ -1,7 +1,7 @@
+import 'package:chatgva/screens/auth_gate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
 
 class DisabledAccountScreen extends StatefulWidget {
   const DisabledAccountScreen({super.key});
@@ -27,7 +27,7 @@ class _DisabledAccountScreenState extends State<DisabledAccountScreen> {
     if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const AuthGate()),
       );
     }
   }
@@ -40,7 +40,7 @@ class _DisabledAccountScreenState extends State<DisabledAccountScreen> {
     if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const AuthGate()),
       );
     }
   }
