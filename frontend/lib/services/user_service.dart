@@ -33,9 +33,9 @@ class UserService {
   }
 
   Future<void> updateUserDocument({
+    required String displayName,
     required String nombre,
     required String apellido,
-    required String email,
   }) async {
     final user = _auth.currentUser;
 
@@ -44,8 +44,8 @@ class UserService {
         await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
           'name': nombre,
           'lastname': apellido,
-          'email': email,
         });
+        await user.updateDisplayName(displayName);
       } catch (e) {
         throw Exception('Error al actualizar el documento de usuario: $e');
       }

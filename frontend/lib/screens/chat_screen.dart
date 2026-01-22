@@ -29,7 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     _controller.clear();
 
-    // 1️⃣ Guardar mensaje del usuario
+    // Guardar mensaje del usuario
     await _chatService.sendMessage(
       conversationId: widget.conversationId,
       text: text,

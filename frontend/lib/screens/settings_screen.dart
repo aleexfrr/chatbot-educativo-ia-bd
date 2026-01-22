@@ -1,4 +1,5 @@
 import 'package:chatgva/screens/auth_gate.dart';
+import 'package:chatgva/screens/profile_screen.dart';
 import 'package:chatgva/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -134,6 +135,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   leading: const Icon(Icons.person),
                   title: Text(user?.displayName ?? 'Invitado'),
                   subtitle: Text(user?.email ?? 'No disponible'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                    );
+                  },
                 ),
                 const Divider(height: 1),
                 ListTile(
