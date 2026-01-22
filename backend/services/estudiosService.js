@@ -1,6 +1,5 @@
 const Estudio = require("../models/Estudio");
 
-// Función para obtener todas las asignaturas de un curso
 async function getAsignaturas(siglasCurso) {
     const curso = await Estudio.findOne({
         siglas: { $regex: `^\\s*${siglasCurso}\\s*$`, $options: "i" }
@@ -13,7 +12,6 @@ async function getAsignaturas(siglasCurso) {
     return curso.assignatures.map(a => ({ nombre: a.nom, horas: a.hores, curso: a.curs }));
 }
 
-// Función para obtener horas de una asignatura específica en un curso
 async function getHoras(asignatura, siglasCurso) {
     const asignatures = await getAsignaturas(siglasCurso);
     if (!asignatures) return null;
@@ -22,7 +20,6 @@ async function getHoras(asignatura, siglasCurso) {
     return a ? a.horas : null;
 }
 
-// Función para obtener información general del curso
 async function getCurso(siglasCurso) {
     const curso = await Estudio.findOne({
         siglas: { $regex: `^\\s*${siglasCurso}\\s*$`, $options: "i" }
