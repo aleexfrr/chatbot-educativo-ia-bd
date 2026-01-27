@@ -1,3 +1,4 @@
+import 'package:chatgva/screens/aules_gate.dart';
 import 'package:chatgva/screens/auth_gate.dart';
 import 'package:chatgva/screens/profile_screen.dart';
 import 'package:chatgva/services/auth_service.dart';
@@ -150,9 +151,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-
           const SizedBox(height: 24),
-
+          // ===== Vincular Aules =====
+          Text('Vincular Aules', style: TextStyles.sectionTitleStyle(context)),
+          const SizedBox(height: 8),
+          Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            elevation: 3,
+            child: ListTile(
+              leading: const Icon(Icons.school),
+              title: const Text('Vincular cuenta con Aules'),
+              subtitle: const Text('Vincula tu cuenta para tener respuestas mas precisas'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AulesGate()),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 24),
           // ===== Apariencia =====
           Text('Apariencia', style: TextStyles.sectionTitleStyle(context)),
           const SizedBox(height: 8),

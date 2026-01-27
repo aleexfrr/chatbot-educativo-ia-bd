@@ -117,6 +117,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       if (!_isGuest) ...[
                         ListTile(
+                          leading: const Icon(Icons.person),
+                          title: const Text('Nombre'),
+                          subtitle: Text(
+                            data?['name'] ?? 'No disponible',
+                          ),
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.person),
+                          title: const Text('Apellidos'),
+                          subtitle: Text(
+                            data?['lastname'] ?? 'No disponible',
+                          ),
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
                           leading: const Icon(Icons.email),
                           title: const Text('Correo electrónico'),
                           subtitle: Text(
