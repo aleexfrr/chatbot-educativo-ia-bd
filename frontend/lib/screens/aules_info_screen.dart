@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/aules_service.dart';
 
 class AulesInfoScreen extends StatefulWidget {
   const AulesInfoScreen({super.key});
@@ -12,7 +13,7 @@ class AulesInfoScreen extends StatefulWidget {
 class _AulesInfoScreenState extends State<AulesInfoScreen> {
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
-
+  final aulesService = AulesService();
   late final User _user;
   late Future<DocumentSnapshot<Map<String, dynamic>>> _userDocFuture;
 
@@ -21,6 +22,8 @@ class _AulesInfoScreenState extends State<AulesInfoScreen> {
     super.initState();
     _user = _auth.currentUser!;
     _userDocFuture = _firestore.collection('users').doc(_user.uid).get();
+
+    aulesService.ensurePdfsAvailable();
   }
 
   @override
