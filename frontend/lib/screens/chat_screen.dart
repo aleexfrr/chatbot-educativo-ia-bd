@@ -23,13 +23,20 @@ class _ChatScreenState extends State<ChatScreen> {
 
   bool _isBotTyping = false;
 
+  /// El sessionId es el mismo que el conversationId
+  /// Esto mantiene el contexto único por conversación
+  String get _sessionId => widget.conversationId;
+
+
+  
+
   Future<void> _send() async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
 
     _controller.clear();
 
-    // Guardar mensaje del usuario
+    // Guardar mensaje del usuario en Firestore
     await _chatService.sendMessage(
       conversationId: widget.conversationId,
       text: text,
@@ -39,22 +46,40 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() => _isBotTyping = true);
 
     try {
-      // Llamada al backend IA
-      final botText = await AgentWebService.obtenerRespuestaAgente(text);
+      print('🔑 Usando sessionId: $_sessionId');
+      
+      // Llamada al backend con sessionId
+      final botText = await AgentWebService.obtenerRespuestaAgente(
+        text,
+        _sessionId, // 👈 Pasa el sessionId único de esta conversación
+      );
 
-      // Guardar mensaje del bot
+      // Guardar respuesta del bot en Firestore
       await _chatService.sendMessage(
         conversationId: widget.conversationId,
         text: botText,
         sender: 'assistant',
       );
+      
     } catch (e) {
-      // Mensaje de error del bot
+      print('❌ Error en _send: $e');
+      
+      // Guardar mensaje de error
       await _chatService.sendMessage(
         conversationId: widget.conversationId,
-        text: 'Error al obtener respuesta del asistente',
+        text: 'Lo siento, hubo un error al obtener la respuesta: ${e.toString()}',
         sender: 'assistant',
       );
+
+      // Mostrar snackbar al usuario
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
       if (mounted) {
         setState(() => _isBotTyping = false);
@@ -67,6 +92,31 @@ class _ChatScreenState extends State<ChatScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Conversación'),
+        actions: [
+          // Mostrar el sessionId en debug (opcional)
+          if (const bool.fromEnvironment('dart.vm.product') == false)
+            IconButton(
+              icon: const Icon(Icons.info_outline),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Session Info'),
+                    content: Text('SessionID: $_sessionId'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+        ],
+      ),
       body: Stack(
         children: [
           // Fondo
@@ -144,6 +194,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     hintText: 'Escribe un mensaje...',
                     border: InputBorder.none,
                   ),
+                  onSubmitted: (_) => _send(), // Enviar con Enter
                 ),
               ),
             ),
@@ -171,10 +222,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _botTypingIndicator() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 8, left: 16),
       child: Row(
         children: const [
-          SizedBox(width: 16),
           Text(
             'XenoBOT está escribiendo...',
             style: TextStyle(
@@ -182,8 +232,23 @@ class _ChatScreenState extends State<ChatScreen> {
               color: Colors.white70,
             ),
           ),
+          SizedBox(width: 8),
+          SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

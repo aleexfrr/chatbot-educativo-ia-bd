@@ -31,7 +31,7 @@ class _AulesRegisterScreenState extends State<AulesRegisterScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   bool _isLoading = true;
-  bool _isSubmitting = false;
+  final bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -160,7 +160,7 @@ class _AulesRegisterScreenState extends State<AulesRegisterScreen> {
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.location_city),
                       ),
-                      value: _selectedProvincia,
+                      initialValue: _selectedProvincia,
                       items: _provincias
                           .map((p) => DropdownMenuItem(value: p, child: Text(p)))
                           .toList(),
@@ -181,7 +181,7 @@ class _AulesRegisterScreenState extends State<AulesRegisterScreen> {
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.location_on),
                       ),
-                      value: _selectedLocalidad,
+                      initialValue: _selectedLocalidad,
                       items: _localidades
                           .map((l) => DropdownMenuItem(value: l, child: Text(l)))
                           .toList(),
@@ -204,7 +204,7 @@ class _AulesRegisterScreenState extends State<AulesRegisterScreen> {
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.school),
                       ),
-                      value: _selectedInstituto,
+                      initialValue: _selectedInstituto,
                       items: _institutos
                           .map((i) => DropdownMenuItem(value: i, child: Text(i)))
                           .toList(),
@@ -222,7 +222,7 @@ class _AulesRegisterScreenState extends State<AulesRegisterScreen> {
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.category),
                       ),
-                      value: _selectedTipo,
+                      initialValue: _selectedTipo,
                       items: _tiposAules
                           .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                           .toList(),

@@ -64,18 +64,40 @@ app.post("/download-pdfs", async (req, res) => {
 // ===== CHAT =====
 app.get("/chat", async (req, res) => {
     const msg = req.query.msg?.trim();
-    if (!msg) return res.json({ respuesta: "Por favor escribe algo" });
+    const sessionId = req.query.sessionId?.trim(); // 👈 Recibir sessionId
+
+    console.log("📩 Mensaje recibido:", msg);
+    console.log("🔑 SessionID recibido:", sessionId);
+
+    // Validaciones
+    if (!msg) {
+        return res.status(400).json({ 
+            error: "Por favor escribe algo" 
+        });
+    }
+
+    if (!sessionId) {
+        return res.status(400).json({ 
+            error: "Se requiere un sessionId para mantener el contexto de la conversación" 
+        });
+    }
 
     try {
-        const respuesta = await invocarAgenteBedrock(msg);
+        // Invocar a Bedrock con el sessionId específico
+        const respuesta = await invocarAgenteBedrock(msg, sessionId);
+        
+        console.log("✅ Respuesta generada:", respuesta);
+        
         res.json({ respuesta });
     } catch (error) {
-        console.error(error);
+        console.error("❌ Error en /chat:", error);
         res.status(500).json({
-            respuesta: "Ocurrió un error al procesar tu consulta con Bedrock."
+            error: "Ocurrió un error al procesar tu consulta con Bedrock.",
+            details: error.message
         });
     }
 });
+
 
 app.listen(3001, () =>
     console.log("🚀 Backend escuchando en http://localhost:3001")

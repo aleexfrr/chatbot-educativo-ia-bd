@@ -65,7 +65,7 @@ flutter:
     - assets/images/bg_login.jpeg
     - assets/images/bg_chat.jpeg
     - assets/images/logo.png
-    - assets/data/centros-docentes-cleaned-final.csv
+    - assets/images/data/centros-docentes-cleaned-final.csv
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

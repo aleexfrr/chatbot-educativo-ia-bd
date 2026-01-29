@@ -14,7 +14,7 @@ class CsvLoaderService {
 
     try {
       // Cargar el archivo CSV desde assets
-      final rawData = await rootBundle.loadString('assets/data/centros-docentes-cleaned-final.csv');
+      final rawData = await rootBundle.loadString('assets/images/data/centros-docentes-cleaned-final.csv');
 
       // Parsear el CSV
       final List<List<dynamic>> csvTable = const CsvToListConverter(
